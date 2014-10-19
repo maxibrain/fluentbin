@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F78AF212-B019-43C2-B3B9-18852E4488F2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BinaryIO</RootNamespace>
+    <AssemblyName>BinaryIO</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Release\BinaryIO.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Annotations\BinaryArrayAttribute.cs" />
+    <Compile Include="Annotations\BinaryBitsAttribute.cs" />
+    <Compile Include="Annotations\BinaryCollectionAttribute.cs" />
+    <Compile Include="Annotations\BinaryIgnoreAttribute.cs" />
+    <Compile Include="Annotations\BinaryListAttribute.cs" />
+    <Compile Include="Annotations\BinaryMemberAttribute.cs" />
+    <Compile Include="BinaryExtensions.cs" />
+    <Compile Include="BinaryFileCoverageMapEntry.cs" />
+    <Compile Include="BinaryOffset.cs" />
+    <Compile Include="BinaryReaderEx.cs" />
+    <Compile Include="BinarySize.cs" />
+    <Compile Include="BitsReader.cs" />
+    <Compile Include="BinaryReaderExtensions.cs" />
+    <Compile Include="BinaryReadingAssertException.cs" />
+    <Compile Include="BinaryReadingErrorArgs.cs" />
+    <Compile Include="BinaryReadingException.cs" />
+    <Compile Include="BinaryFileCoverageMap.cs" />
+    <Compile Include="BitsReaderExtensions.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Mapping\Builders\IExpressionBuilder.cs" />
+    <Compile Include="Mapping\Builders\IMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\Impl\AdvancedExpression.cs" />
+    <Compile Include="Mapping\Builders\Impl\Delegates.cs" />
+    <Compile Include="Mapping\Bin.cs" />
+    <Compile Include="Mapping\Builders\Impl\ExpressionBuilderArgs.cs" />
+    <Compile Include="Mapping\Builders\Impl\IValueHandler.cs" />
+    <Compile Include="Mapping\Builders\Impl\MemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\Impl\SkippedMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\Impl\StringMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\Impl\StructMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\Impl\ValueHandlers\ArrayValueHandler.cs" />
+    <Compile Include="Mapping\Builders\Impl\ValueHandlers\CollectionValueHandler.cs" />
+    <Compile Include="Mapping\Builders\Impl\ValueHandlers\CustomTypeValueHandler.cs" />
+    <Compile Include="Mapping\Builders\Impl\ValueHandlers\FallbackValueHandler.cs" />
+    <Compile Include="Mapping\Builders\Impl\ValueHandlers\ListValueHandler.cs" />
+    <Compile Include="Mapping\Builders\Impl\ValueHandlers\StructValueHandler.cs" />
+    <Compile Include="Mapping\Builders\ISkippedMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\IStringMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\IStructMemberBuilder.cs" />
+    <Compile Include="Mapping\Contexts\Impl\CollectionMemberContext.cs" />
+    <Compile Include="Mapping\Contexts\Impl\Context.cs" />
+    <Compile Include="Endianness.cs" />
+    <Compile Include="Mapping\Contexts\Impl\MemberContext.cs" />
+    <Compile Include="Mapping\InvalidMappingException.cs" />
+    <Compile Include="Mapping\Models\Impl\FileFormat.cs" />
+    <Compile Include="Mapping\Builders\Impl\FileFormatBuilder.cs" />
+    <Compile Include="Mapping\Builders\IArrayMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\ICollectionMemberBuilder.cs" />
+    <Compile Include="Mapping\Models\IFileFormat.cs" />
+    <Compile Include="Mapping\Builders\IFileFormatBuilder.cs" />
+    <Compile Include="Mapping\Builders\IListMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\IClassMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\Impl\ArrayMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\Impl\CollectionMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\Impl\ListMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\Impl\ClassMemberBuilder.cs" />
+    <Compile Include="Mapping\Builders\Impl\TypeBuilder.cs" />
+    <Compile Include="Mapping\Builders\ITypeBuilder.cs" />
+    <Compile Include="Mapping\Contexts\ICollectionMemberContext.cs" />
+    <Compile Include="Mapping\Contexts\IContext.cs" />
+    <Compile Include="Mapping\Contexts\IMemberContext.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReflectionExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
