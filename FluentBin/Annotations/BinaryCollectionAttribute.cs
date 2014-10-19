@@ -1,4 +1,4 @@
-namespace FluentBin
+namespace FluentBin.Annotations
 {
     /// <summary>
     /// Base attribute for reading collection typed values like arrays and lists.

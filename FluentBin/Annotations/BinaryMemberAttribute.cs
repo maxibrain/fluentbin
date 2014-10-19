@@ -1,6 +1,6 @@
 using System;
 
-namespace FluentBin
+namespace FluentBin.Annotations
 {
     /// <summary>
     /// Basic attribute for describing reading process of a property or a field. Attribute is optional. All public properties and fields considered to be read unless BinaryIgnore attribute is specified.
@@ -9,11 +9,11 @@ namespace FluentBin
     public class BinaryMemberAttribute : Attribute
     {
         /// <summary>
-        /// Size of value in bytes. Valid for value types only.
+        /// Size of value in bits. Valid for value types only.
         /// </summary>
         public int Size { get; set; }
         /// <summary>
-        /// Name of a property that calculates size of value in bytes. Valid for value types only.
+        /// Name of a property that calculates size of value in bits. Valid for value types only.
         /// </summary>
         /// <remarks>Should return ulong.</remarks>
         public string SizeMember { get; set; }
@@ -46,14 +46,6 @@ namespace FluentBin
         /// <code>T Create()</code>
         /// </remarks>
         public string FactoryMethod { get; set; }
-        /// <summary>
-        /// Name of a method selecting type of instance to be constructed for the current member.
-        /// </summary>
-        /// <remarks>
-        /// The method should have the following signature:
-        /// <code>Type SelectType()</code>
-        /// </remarks>
-        public string TypeSelectorMethod { get; set; }
         /// <summary>
         /// Name of a method converting the current member value after it has been read.
         /// </summary>

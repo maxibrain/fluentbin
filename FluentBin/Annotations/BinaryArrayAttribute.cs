@@ -1,4 +1,4 @@
-namespace FluentBin
+namespace FluentBin.Annotations
 {
     /// <summary>
     /// Attribute for reading array typed property.

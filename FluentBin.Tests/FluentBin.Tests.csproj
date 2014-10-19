@@ -6,8 +6,8 @@
     <ProjectGuid>{AA41DC48-EBB0-4C99-8CB7-0E99713E7B7A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BinaryIO.Tests</RootNamespace>
-    <AssemblyName>BinaryIO.Tests</AssemblyName>
+    <RootNamespace>FluentBin.Tests</RootNamespace>
+    <AssemblyName>FluentBin.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -71,7 +71,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\OneNoteSolution\BinaryIO\FluentBin.csproj">
+    <ProjectReference Include="..\FluentBin\FluentBin.csproj">
       <Project>{F78AF212-B019-43C2-B3B9-18852E4488F2}</Project>
       <Name>FluentBin</Name>
     </ProjectReference>
