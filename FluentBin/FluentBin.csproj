@@ -62,17 +62,10 @@
     <Compile Include="Mapping\Builders\Impl\Delegates.cs" />
     <Compile Include="Mapping\Bin.cs" />
     <Compile Include="Mapping\Builders\Impl\ExpressionBuilderArgs.cs" />
-    <Compile Include="Mapping\Builders\Impl\IValueHandler.cs" />
     <Compile Include="Mapping\Builders\Impl\MemberBuilder.cs" />
     <Compile Include="Mapping\Builders\Impl\SkippedMemberBuilder.cs" />
     <Compile Include="Mapping\Builders\Impl\StringMemberBuilder.cs" />
     <Compile Include="Mapping\Builders\Impl\StructMemberBuilder.cs" />
-    <Compile Include="Mapping\Builders\Impl\ValueHandlers\ArrayValueHandler.cs" />
-    <Compile Include="Mapping\Builders\Impl\ValueHandlers\CollectionValueHandler.cs" />
-    <Compile Include="Mapping\Builders\Impl\ValueHandlers\CustomTypeValueHandler.cs" />
-    <Compile Include="Mapping\Builders\Impl\ValueHandlers\FallbackValueHandler.cs" />
-    <Compile Include="Mapping\Builders\Impl\ValueHandlers\ListValueHandler.cs" />
-    <Compile Include="Mapping\Builders\Impl\ValueHandlers\StructValueHandler.cs" />
     <Compile Include="Mapping\Builders\ISkippedMemberBuilder.cs" />
     <Compile Include="Mapping\Builders\IStringMemberBuilder.cs" />
     <Compile Include="Mapping\Builders\IStructMemberBuilder.cs" />
