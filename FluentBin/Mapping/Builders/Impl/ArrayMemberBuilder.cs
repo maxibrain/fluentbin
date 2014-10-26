@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq.Expressions;
 using FluentBin.Mapping.Contexts;
-using FluentBin.Mapping.Contexts.Impl;
 
 namespace FluentBin.Mapping.Builders.Impl
 {
-    class ArrayMemberBuilder<T, TElement> : CollectionMemberBuilder<T, TElement[], TElement>, IArrayMemberBuilder<T, TElement>
+    class ArrayMemberBuilder<TBuilder, T, TElement> : CollectionMemberBuilder<TBuilder, T, TElement[], TElement>, IGenericArrayMemberBuilder<TBuilder, T, TElement>
+        where TBuilder : ArrayMemberBuilder<TBuilder, T, TElement>
     {
         private Expression<Func<IContext<T>, ulong>> _length;
 
@@ -17,15 +16,15 @@ namespace FluentBin.Mapping.Builders.Impl
 
         #region Implementation of IArrayMemberBuilder<T,TElement>
 
-        public IArrayMemberBuilder<T, TElement> Length(UInt64 length)
+        public TBuilder Length(UInt64 length)
         {
             return Length(c => length);
         }
 
-        public IArrayMemberBuilder<T, TElement> Length(Expression<Func<IContext<T>, UInt64>> expression)
+        public TBuilder Length(Expression<Func<IContext<T>, UInt64>> expression)
         {
             _length = expression;
-            return this;
+            return (TBuilder)this;
         }
 
         #endregion
@@ -72,6 +71,83 @@ namespace FluentBin.Mapping.Builders.Impl
         protected override Expression InsertElement(ExpressionBuilderArgs args, ParameterExpression innerResultVar, ParameterExpression iVar, ParameterExpression iteratorVar)
         {
             return Expression.Assign(Expression.ArrayAccess(innerResultVar, iVar), iteratorVar);
+        }
+    }
+
+    class ArrayMemberBuilder<T, TElement> : ArrayMemberBuilder<ArrayMemberBuilder<T, TElement>, T, TElement>, IArrayMemberBuilder<T, TElement>
+    {
+        public ArrayMemberBuilder(MemberExpression expression) : base(expression)
+        {
+        }
+
+        public new IArrayMemberBuilder<T, TElement> SizeOf(BinarySize size)
+        {
+            return base.SizeOf(size);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> SizeOf(Expression<Func<IContext<T>, BinarySize>> expression)
+        {
+            return base.SizeOf(expression);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> If(Expression<Func<IContext<T>, bool>> expression)
+        {
+            return base.If(expression);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> SetOrder(int order)
+        {
+            return base.SetOrder(order);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> Position(Expression<Func<IContext<T>, BinaryOffset>> expression)
+        {
+            return base.Position(expression);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> OverrideEndianess(Endianness endianness)
+        {
+            return base.OverrideEndianess(endianness);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> UseFactory(Expression<Func<IContext<T>, TElement[]>> expression)
+        {
+            return base.UseFactory(expression);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> ConvertValue(Expression<Func<IMemberContext<T, TElement[]>, TElement[]>> expression)
+        {
+            return base.ConvertValue(expression);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> Assert(Expression<Func<IMemberContext<T, TElement[]>, bool>> expression)
+        {
+            return base.Assert(expression);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> AfterRead(Expression<Action<IMemberContext<T, TElement[]>>> expression)
+        {
+            return base.AfterRead(expression);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> PositionAfter(Expression<Func<IMemberContext<T, TElement[]>, BinaryOffset>> expression)
+        {
+            return base.PositionAfter(expression);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> Element(Action<IMemberBuilder<TElement[], TElement>> elementBuilderConfiguration)
+        {
+            return base.Element(elementBuilderConfiguration);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> Length(ulong length)
+        {
+            return base.Length(length);
+        }
+
+        public new IArrayMemberBuilder<T, TElement> Length(Expression<Func<IContext<T>, ulong>> expression)
+        {
+            return base.Length(expression);
         }
     }
 }

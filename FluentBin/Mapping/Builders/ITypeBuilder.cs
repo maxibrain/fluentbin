@@ -10,7 +10,7 @@ namespace FluentBin.Mapping.Builders
         ITypeBuilder<T> Read<TMember>(Expression<Func<T, TMember>> expression, Action<IMemberBuilder<T, TMember>> memberConfiguration = null);
         ITypeBuilder<T> Read<TElement>(Expression<Func<T, TElement[]>> expression, Action<IArrayMemberBuilder<T, TElement>> memberConfiguration);
         ITypeBuilder<T> Read<TElement>(Expression<Func<T, IList<TElement>>> expression, Action<IListMemberBuilder<T, TElement>> memberConfiguration = null);
-        ITypeBuilder<T> Skip<TMember>(Expression<Func<T, TMember>> expression, Action<ISkippedMemberBuilder<T, TMember>> memberConfiguration);
+        ITypeBuilder<T> Skip<TMember>(Expression<Func<T, TMember>> expression, Action<ISkippedMemberBuilder<T>> memberConfiguration);
         ITypeBuilder<T> Ignore<TMember>(Expression<Func<T, TMember>> expression);
 /*
         ITypeBuilder<T> Read(Expression<Func<T, String>> expression, Action<IStringMemberBuilder<T>> memberConfiguration = null);

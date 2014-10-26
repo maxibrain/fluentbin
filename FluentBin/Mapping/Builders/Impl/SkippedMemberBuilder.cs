@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using FluentBin.Mapping.Contexts;
 
 namespace FluentBin.Mapping.Builders.Impl
 {
-    class SkippedMemberBuilder<T, TMember> : MemberBuilder<T>, ISkippedMemberBuilder<T, TMember>
+    class SkippedMemberBuilder<TBuilder, T> : GenericMemberBuilder<TBuilder, T>, IGenericSkippedMemberBuilder<TBuilder, T>
+        where TBuilder : SkippedMemberBuilder<TBuilder, T>
     {
-        private Expression<Func<IContext<T>, BinarySize>> _size;
-        private Expression<Func<IContext<T>, Boolean>> _if;
-
         public SkippedMemberBuilder(Type memberType, string memberName) : base(memberType, memberName)
         {
         }
@@ -27,37 +22,59 @@ namespace FluentBin.Mapping.Builders.Impl
 
         protected override Expression BuildCtorExpression(ExpressionBuilderArgs args)
         {
-            return Expression.Default(typeof(TMember));
+            return Expression.Default(MemberType);
         }
 
         protected override Expression BuildBodyExpression(ExpressionBuilderArgs args, ParameterExpression innerResultVar, ParameterExpression typeVar)
         {
-            if (_size == null)
+            if (Size == null)
                 throw new InvalidMappingException("Size of skipped member must be set.");
-            return Expression.AddAssign(AdvancedExpression.Position(args.BrParameter), Expression.Convert(Invoke(_size, args), typeof(BinaryOffset)));
+            return Expression.AddAssign(AdvancedExpression.Position(args.BrParameter), Expression.Convert(Invoke(Size, args), typeof(BinaryOffset)));
+        }
+    }
+
+    class SkippedMemberBuilder<T> : SkippedMemberBuilder<SkippedMemberBuilder<T>, T>, ISkippedMemberBuilder<T>
+    {
+        public SkippedMemberBuilder(Type memberType, string memberName) : base(memberType, memberName)
+        {
         }
 
-        public ISkippedMemberBuilder<T, TMember> SizeOf(BinarySize sizeInBytes)
+        public SkippedMemberBuilder(MemberInfo memberInfo) : base(memberInfo)
         {
-            return SizeOf(context => sizeInBytes);
         }
 
-        public ISkippedMemberBuilder<T, TMember> SizeOf(Expression<Func<IContext<T>, BinarySize>> expression)
+        public SkippedMemberBuilder(MemberExpression memberExpression) : base(memberExpression)
         {
-            _size = expression;
-            return this;
         }
 
-        public ISkippedMemberBuilder<T, TMember> If(Expression<Func<IContext<T>, bool>> expression)
+        public new ISkippedMemberBuilder<T> SizeOf(BinarySize size)
         {
-            _if = expression;
-            return this;
+            return base.SizeOf(size);
         }
 
-        public ISkippedMemberBuilder<T, TMember> SetOrder(int order)
+        public new ISkippedMemberBuilder<T> SizeOf(Expression<Func<IContext<T>, BinarySize>> expression)
         {
-            Order = order;
-            return this;
+            return base.SizeOf(expression);
+        }
+
+        public new ISkippedMemberBuilder<T> If(Expression<Func<IContext<T>, bool>> expression)
+        {
+            return base.If(expression);
+        }
+
+        public new ISkippedMemberBuilder<T> SetOrder(int order)
+        {
+            return base.SetOrder(order);
+        }
+
+        public new ISkippedMemberBuilder<T> Position(Expression<Func<IContext<T>, BinaryOffset>> expression)
+        {
+            return base.Position(expression);
+        }
+
+        public new ISkippedMemberBuilder<T> OverrideEndianess(Endianness endianness)
+        {
+            return base.OverrideEndianess(endianness);
         }
     }
 }

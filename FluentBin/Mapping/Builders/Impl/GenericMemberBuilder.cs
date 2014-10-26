@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
@@ -8,117 +9,67 @@ using FluentBin.Mapping.Contexts;
 
 namespace FluentBin.Mapping.Builders.Impl
 {
-    abstract class MemberBuilder<T, TMember> : MemberBuilder<T>, IMemberBuilder<T, TMember>
+    internal abstract class GenericMemberBuilder<TBuilder, T, TMember> : GenericMemberBuilder<TBuilder, T>, IGenericMemberBuilder<TBuilder, T, TMember>
+        where TBuilder : GenericMemberBuilder<TBuilder, T, TMember>
     {
-        protected MemberBuilder(MemberExpression expression)
+        protected GenericMemberBuilder(MemberExpression expression)
             : base(expression)
         {
         }
 
-        protected MemberBuilder(MemberInfo memberInfo)
+        protected GenericMemberBuilder(MemberInfo memberInfo)
             : base(memberInfo)
         {
             
         }
 
-        protected MemberBuilder(string memberName)
+        protected GenericMemberBuilder(string memberName)
             : base(typeof(TMember), memberName)
         {
         }
 
-        protected Expression<Func<IContext<T>, Boolean>> _if;
-        protected Expression<Func<IContext<T>, BinaryOffset>> _position;
         protected Expression<Func<IContext<T>, TMember>> _factory;
         protected Expression<Func<IMemberContext<T, TMember>, TMember>> _convertValue;
         protected Expression<Func<IMemberContext<T, TMember>, Boolean>> _assertValue;
         protected Expression<Action<IMemberContext<T, TMember>>> _afterRead;
         protected Expression<Func<IMemberContext<T, TMember>, BinaryOffset>> _positionAfter;
-        protected Expression<Func<IContext<T>, Encoding>> _encoding;
 
         protected Expression Invoke<TResult>(Expression<Func<IMemberContext<T, TMember>, TResult>> expression, ExpressionBuilderArgs args, ParameterExpression innerResultVar)
         {
             return Expression.Invoke(expression, AdvancedExpression.MemberContext<T, TMember>(args.BrParameter, args.InstanceVar, innerResultVar));
         }
 
-        #region Implementation of IMemberBuilder<T,TMember>
+        #region Implementation of IGenericMemberBuilder<T,TMember>
 
-        public IMemberBuilder<T, TMember> UseFactory(Expression<Func<IContext<T>, TMember>> expression)
+        public TBuilder UseFactory(Expression<Func<IContext<T>, TMember>> expression)
         {
             _factory = expression;
-            return this;
+            return (TBuilder)this;
         }
 
-        public IMemberBuilder<T, TMember> If(Expression<Func<IContext<T>, Boolean>> expression)
-        {
-            _if = expression;
-            return this;
-        }
-
-        public IMemberBuilder<T, TMember> ConvertValue(Expression<Func<IMemberContext<T, TMember>, TMember>> expression)
+        public TBuilder ConvertValue(Expression<Func<IMemberContext<T, TMember>, TMember>> expression)
         {
             _convertValue = expression;
-            return this;
+            return (TBuilder)this;
         }
 
-        public IMemberBuilder<T, TMember> Assert(Expression<Func<IMemberContext<T, TMember>, Boolean>> expression)
+        public TBuilder Assert(Expression<Func<IMemberContext<T, TMember>, Boolean>> expression)
         {
             _assertValue = expression;
-            return this;
+            return (TBuilder)this;
         }
 
-        public IMemberBuilder<T, TMember> AfterRead(Expression<Action<IMemberContext<T, TMember>>> expression)
+        public TBuilder AfterRead(Expression<Action<IMemberContext<T, TMember>>> expression)
         {
             _afterRead = expression;
-            return this;
+            return (TBuilder)this;
         }
 
-        public IMemberBuilder<T, TMember> SizeOf(BinarySize size)
-        {
-            return SizeOf(c => size);
-        }
-
-        public IMemberBuilder<T, TMember> SizeOf(Expression<Func<IContext<T>, BinarySize>> expression)
-        {
-            Size = expression;
-            return this;
-        }
-
-        public IMemberBuilder<T, TMember> SetOrder(int order)
-        {
-            Order = order;
-            return this;
-        }
-
-        public IMemberBuilder<T, TMember> Position(Expression<Func<IContext<T>, BinaryOffset>> expression)
-        {
-            _position = expression;
-            return this;
-        }
-
-        public IMemberBuilder<T, TMember> PositionAfter(Expression<Func<IMemberContext<T, TMember>, BinaryOffset>> expression)
+        public TBuilder PositionAfter(Expression<Func<IMemberContext<T, TMember>, BinaryOffset>> expression)
         {
             _positionAfter = expression;
-            return this;
+            return (TBuilder)this;
         }
-
-        public IMemberBuilder<T, TMember> OverrideEndianess(Endianness endianness)
-        {
-            EndiannessOverride = endianness;
-            return this;
-        }
-
-        public IMemberBuilder<T, TMember> StringEncoding(Encoding encoding)
-        {
-            return StringEncoding(c => encoding);
-        }
-
-        public IMemberBuilder<T, TMember> StringEncoding(Expression<Func<IContext<T>, Encoding>> encodingExpression)
-        {
-            _encoding = encodingExpression;
-            return this;
-        }
-
-        protected Endianness? EndiannessOverride { get; set; }
 
         #endregion
 
@@ -161,37 +112,35 @@ namespace FluentBin.Mapping.Builders.Impl
                 expressions.Add(Expression.Assign(AdvancedExpression.Position(args.BrParameter), Invoke(_positionAfter, args, innerResultVar)));
             return Expression.Block(expressions);
         }
-
-        public static MemberBuilder<T, TMember> Create(string memberName)
-        {
-            return Create(typeof (TMember), memberName) as MemberBuilder<T, TMember>;
-        }
     }
 
-    internal abstract class MemberBuilder<T> : IMemberBuilder<T>, IExpressionBuilder
+    internal abstract class GenericMemberBuilder<TBuilder, T> : IGenericMemberBuilder<TBuilder, T>, IMemberBuilderBase
+        where TBuilder : GenericMemberBuilder<TBuilder, T>
     {
         public Type MemberType { get; private set; }
         public string MemberName { get; private set; }
 
-        protected MemberBuilder(Type memberType, string memberName)
+        protected GenericMemberBuilder(Type memberType, string memberName)
         {
             MemberType = memberType;
             MemberName = memberName;
         }
 
-        protected MemberBuilder(MemberInfo memberInfo)
+        protected GenericMemberBuilder(MemberInfo memberInfo)
             : this(memberInfo.GetMemberType(), memberInfo.Name)
         {
         }
 
-        protected MemberBuilder(MemberExpression memberExpression)
+        protected GenericMemberBuilder(MemberExpression memberExpression)
             : this(memberExpression.Member)
         {
         }
 
+        protected Expression<Func<IContext<T>, Boolean>> _if;
+        protected Expression<Func<IContext<T>, BinaryOffset>> _position;
         public int Order { get; protected set; }
-
         protected Expression<Func<IContext<T>, BinarySize>> Size;
+        protected Endianness? EndiannessOverride { get; set; }
 
         protected Expression Invoke<TResult>(Expression<Func<IContext<T>, TResult>> expression, ExpressionBuilderArgs args)
         {
@@ -254,39 +203,39 @@ namespace FluentBin.Mapping.Builders.Impl
 
         #endregion
 
-        public static MemberBuilder<T> Create(MemberInfo memberInfo)
+        public TBuilder SizeOf(BinarySize size)
         {
-            return Create(memberInfo.GetMemberType(), memberInfo.Name);
+            return SizeOf(c => size);
         }
 
-        public static MemberBuilder<T> Create(Type memberType, string memberName)
+        public TBuilder SizeOf(Expression<Func<IContext<T>, BinarySize>> expression)
         {
-            Type builderType;
-            Type t2 = memberType;
-            
-            if (memberType == typeof(String))
-            {
-                return new StringMemberBuilder<T>(memberName);
-            }
-            
-            if (memberType.IsStruct())
-            {
-                builderType = typeof (StructMemberBuilder<,>);
-            }
-            else if (memberType.IsClass())
-            {
-                builderType = typeof (ClassMemberBuilder<,>);
-            }
-            else if (memberType.IsList())
-            {
-                builderType = typeof(ListMemberBuilder<,>);
-                t2 = memberType.GetGenericArguments()[0];
-            }
-            else
-            {
-                throw new ArgumentException("Not supported type.", "memberInfo");
-            }
-            return (MemberBuilder<T>)Activator.CreateInstance(builderType.MakeGenericType(typeof(T), t2), memberName);
+            Size = expression;
+            return (TBuilder)this;
+        }
+
+        public TBuilder SetOrder(int order)
+        {
+            Order = order;
+            return (TBuilder)this;
+        }
+
+        public TBuilder Position(Expression<Func<IContext<T>, BinaryOffset>> expression)
+        {
+            _position = expression;
+            return (TBuilder)this;
+        }
+
+        public TBuilder OverrideEndianess(Endianness endianness)
+        {
+            EndiannessOverride = endianness;
+            return (TBuilder)this;
+        }
+
+        public TBuilder If(Expression<Func<IContext<T>, Boolean>> expression)
+        {
+            _if = expression;
+            return (TBuilder)this;
         }
     }
 }

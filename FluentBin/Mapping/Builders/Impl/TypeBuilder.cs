@@ -10,22 +10,21 @@ namespace FluentBin.Mapping.Builders.Impl
 {
     class TypeBuilder<T> : ITypeBuilder<T>, IExpressionBuilder 
     {
-        private readonly Dictionary<MemberInfo, MemberBuilder<T>> _memberBuilders = new Dictionary<MemberInfo, MemberBuilder<T>>();
+        private readonly Dictionary<MemberInfo, IMemberBuilderBase> _memberBuilders = new Dictionary<MemberInfo, IMemberBuilderBase>();
         private Endianness? _endianness;
 
         private TBuilder GetOrCreateBuilder<TBuilder>(MemberInfo memberInfo, Func<TBuilder> factoryMethod)
-            where TBuilder : MemberBuilder<T>
+            where TBuilder : class, IMemberBuilderBase
         {
             Debug.Assert(memberInfo != null);
             Debug.Assert(factoryMethod != null);
-            MemberBuilder<T> resultObj;
-            if (_memberBuilders.TryGetValue(memberInfo, out resultObj) && resultObj is TBuilder)
+            IMemberBuilderBase resultObj;
+            if (!_memberBuilders.TryGetValue(memberInfo, out resultObj) || !(resultObj is TBuilder))
             {
-                return resultObj as TBuilder;
+                resultObj = factoryMethod();
             }
-            TBuilder result = factoryMethod();
-            _memberBuilders[memberInfo] = result;
-            return result;
+            _memberBuilders[memberInfo] = resultObj;
+            return resultObj as TBuilder;
         }
 
         #region Implementation of ITypeBuilder<T>
@@ -41,7 +40,7 @@ namespace FluentBin.Mapping.Builders.Impl
             var memberExpression = expression.Body as MemberExpression;
             if (memberExpression == null)
                 throw new ArgumentException("Expression should point a member", "expression");
-            Func<MemberBuilder<T>> factoryMethod;
+            Func<IMemberBuilderBase> factoryMethod;
             if (typeof(TMember) == typeof(String))
             {
                 factoryMethod = () => new StringMemberBuilder<T>(memberExpression);
@@ -108,12 +107,12 @@ namespace FluentBin.Mapping.Builders.Impl
             return this;
         }
 
-        public ITypeBuilder<T> Skip<TMember>(Expression<Func<T, TMember>> expression, Action<ISkippedMemberBuilder<T, TMember>> memberConfiguration)
+        public ITypeBuilder<T> Skip<TMember>(Expression<Func<T, TMember>> expression, Action<ISkippedMemberBuilder<T>> memberConfiguration)
         {
             var memberExpression = expression.Body as MemberExpression;
             if (memberExpression == null)
                 throw new ArgumentException("Expression should point a member", "expression");
-            var memberBuilder = new SkippedMemberBuilder<T, TMember>(memberExpression);
+            var memberBuilder = new SkippedMemberBuilder<T>(memberExpression);
             _memberBuilders[memberExpression.Member] = memberBuilder;
             if (memberConfiguration != null)
                 memberConfiguration(memberBuilder);
@@ -122,13 +121,13 @@ namespace FluentBin.Mapping.Builders.Impl
 
         #endregion
 
-        private SortedList<Int32, MemberBuilder<T>> GetMembers()
+        private SortedList<Int32, IMemberBuilderBase> GetMembers()
         {
-            var result = new SortedList<Int32, MemberBuilder<T>>();
+            var result = new SortedList<Int32, IMemberBuilderBase>();
             var order = 0;
             foreach (var memberInfo in typeof(T).GetMembers().Where(ShouldReadMember))
             {
-                MemberBuilder<T> builder;
+                IMemberBuilderBase builder;
                 if (!_memberBuilders.ContainsKey(memberInfo))
                 {
                     if (memberInfo.IsArray())
@@ -136,7 +135,7 @@ namespace FluentBin.Mapping.Builders.Impl
                         throw new InvalidMappingException(string.Format("Array member '{0}' can't be configured automatically.", memberInfo));
                     }
                     // TODO: add check for default ctor existance
-                    builder = MemberBuilder<T>.Create(memberInfo);
+                    builder = MemberBuilderFactory.Create<T>(memberInfo);
                 }
                 else
                 {
