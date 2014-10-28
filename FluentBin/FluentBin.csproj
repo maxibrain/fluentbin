@@ -43,11 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Annotations\BinaryArrayAttribute.cs" />
-    <Compile Include="Annotations\BinaryCollectionAttribute.cs" />
-    <Compile Include="Annotations\BinaryIgnoreAttribute.cs" />
-    <Compile Include="Annotations\BinaryListAttribute.cs" />
-    <Compile Include="Annotations\BinaryMemberAttribute.cs" />
     <Compile Include="BinaryExtensions.cs" />
     <Compile Include="BinaryOffset.cs" />
     <Compile Include="BinarySize.cs" />
